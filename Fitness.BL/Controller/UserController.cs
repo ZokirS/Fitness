@@ -20,9 +20,28 @@ namespace Fitness.BL.Controller
         /// </summary>
         /// <param name="user"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public UserController(User user)
+        public UserController(string userName, string genderName, DateTime bd, double weight, double height)
         {
-            User = user ?? throw new ArgumentNullException("User cannot be null", nameof(user));
+
+            var gender = new Gender(genderName);
+            User = new User(userName, gender, bd, weight, height);
+        }
+
+        /// <summary>
+        /// Load current user
+        /// </summary>
+        /// <returns> Load user</returns>
+        /// <exception cref="FileLoadException"></exception>
+        public UserController()
+        {
+            var formatter = new BinaryFormatter();
+            using (var fs = new FileStream("user.dat", FileMode.OpenOrCreate))
+            {
+                if (formatter.Deserialize(fs) is User user)
+                {
+                    User = user;
+                }
+            }
         }
         /// <summary>
         /// Save user
@@ -36,21 +55,6 @@ namespace Fitness.BL.Controller
             }
         }
 
-        /// <summary>
-        /// Load current user
-        /// </summary>
-        /// <returns> Load user</returns>
-        /// <exception cref="FileLoadException"></exception>
-        public UserController()
-        {
-            var formatter = new BinaryFormatter();
-            using (var fs = new FileStream("user.dat", FileMode.OpenOrCreate))
-            {
-               if( formatter.Deserialize(fs) is User user)
-                {
-                    User = user;
-                }
-            }
-        }
+        
     }
 }
